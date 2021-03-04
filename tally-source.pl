@@ -82,6 +82,18 @@ foreach my $f (glob('*.lexc')) {
    $stats{$f}{'stems'}{'mt'} = $stats{$f}{'stems'}{'all'} - $stats{$f}{'stems'}{'vanilla'};
 }
 
+foreach my $f (glob('*.lexd')) {
+   $stats{$f}{'kind'} = 'lexd';
+   wc($f);
+   my $s = `lexd -x '$f' 2>&1 >/dev/null`;
+   if ($s =~ m/Lexicons: (\d+)\s*Lexicon entries: (\d+)\s*Patterns: (\d+)\s*Pattern entries: (\d+)/s) {
+      $stats{$f}{'lexicons'} = $1+0;
+      $stats{$f}{'lexicon_entries'} = $2+0;
+      $stats{$f}{'patterns'} = $3+0;
+      $stats{$f}{'pattern_entries'} = $4+0;
+   }
+}
+
 foreach my $f (glob('*.twol')) {
    $stats{$f}{'kind'} = 'twol';
    wc($f);
