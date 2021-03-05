@@ -20,6 +20,8 @@ use JSON;
 my %stats = ();
 my $tmpdir = File::Spec->tmpdir();
 
+$ENV{'TZ'} = 'UTC';
+
 sub wc {
    my ($f) = @_;
    my $s = `wc -c -l '$f'`;
@@ -147,6 +149,16 @@ $stats{'_total'} = \%total;
 
 if (-e "$tmpdir/tmp-$$") {
    unlink("$tmpdir/tmp-$$");
+}
+
+my $l = `git log '--date=format-local:\%Y-\%m-\%d \%H:\%M:\%S' --first-parent '--format=format:\%H\%x09\%ad\%x09\%an\%x09\%aE' -n1`;
+if ($l =~ m/^([^\t]+)\t([^\t]+)\t([^\t]+)\t([^\t\n]+)$/) {
+   $stats{'_meta'} = {
+      'commit' => $1,
+      'date' => $2,
+      'author_name' => $3,
+      'author_email' => $4,
+   };
 }
 
 print JSON->new->canonical(1)->utf8(1)->pretty(1)->encode(\%stats);
