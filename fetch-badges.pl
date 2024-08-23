@@ -65,6 +65,7 @@ while (my ($kind,$t) = each(%{$stats->{'_total'}})) {
 
    if (scalar(@ns)) {
       my $v = join(', ', @ns);
+      $v =~ s/ /%20/g;
       print "$kind: $v\n";
       `curl -s -S 'https://img.shields.io/badge/$kind-$v-blue' -o '$kind.svg'`;
    }
